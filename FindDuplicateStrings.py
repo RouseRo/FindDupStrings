@@ -5,7 +5,7 @@
 # Title: The Find Duplicate Strings Project
 # Author: Robert Rouse
 # Created Date: 09-11-2020, 12:15
-# Last Updated: 09-18-2020, 19:45
+# Last Updated: 09-19-2020, 17:56
 #
 # History:
 #   Added the DuplicateStringsResults class
@@ -15,6 +15,7 @@
 #   Added GetFirstOccuranceOfStr()
 #   The solution is now a list of lists.
 #   Added GetIndexOfSolutionListWithDupStr()
+#   Got the FindDupStrings_Set_Method() working
 #
 #==================================================================================================
 #==================================================================================================
@@ -76,10 +77,11 @@ def FindDupStrings_Random_Method():
     method_elapsed_time = dtEnd - dtStart 
     return DuplicateStringsResults("Random", method_elapsed_time,solutionData)
 
+#==================================================================================================
+#==================================================================================================
 
 def FindDupStrings_Hash_Method(DuplicateStringTestData):
     solutionLists = []
-    unique_dup_strs = 0
 
     dtStart = datetime.datetime.now()
     solutionLists.clear()
@@ -111,15 +113,41 @@ def FindDupStrings_Hash_Method(DuplicateStringTestData):
     method_elapsed_time = dtEnd - dtStart 
     return DuplicateStringsResults("Hash", method_elapsed_time,solutionLists)
 
+#==================================================================================================
+
 def FindDupStrings_Set_Method(DuplicateStringTestData):
-    method_elapsed_time = 2
-    return DuplicateStringsResults("Set", method_elapsed_time,solutionData)
+    solutionLists = []
+    testDataSet = {""}
+
+    dtStart = datetime.datetime.now()
+    solutionLists.clear()
+
+    pos = -1
+    for str in DuplicateStringTestData.testDataList:
+        pos = pos + 1
+        setLengthBeforeAdd = len(testDataSet)
+        testDataSet.add(str)
+        setLengthAfterAdd = len(testDataSet)
+        if setLengthBeforeAdd == setLengthAfterAdd:
+            # See if the duplicate str is already in a solution list
+            slIndex = GetIndexOfSolutionListWithDupStr(pos,solutionLists, DuplicateStringTestData.testDataList)
+            if( slIndex >= 0):
+                solutionLists[slIndex].append(pos)
+            else:
+            # Find the first occurance of the dup string
+                firstPos = GetFirstOccuranceOfStr(pos,DuplicateStringTestData.testDataList)
+                solutionLists.append([firstPos, pos])
+
+    dtEnd = datetime.datetime.now()
+    method_elapsed_time = dtEnd - dtStart 
+    return DuplicateStringsResults("Set", method_elapsed_time,solutionLists)
 
 def FindDupStrings_Dict_Method(DuplicateStringTestData):
     method_elapsed_time = 3
     return DuplicateStringsResults("Dict", method_elapsed_time,solutionData)
 
 
+#==================================================================================================
 
 def FindDupStrings_MethodPassedData(funcNum, DuplicateStringTestData):
     if funcNum == 1:
@@ -143,6 +171,9 @@ def FindDupStrings_MethodPassedData(funcNum, DuplicateStringTestData):
     print(f" {resultStr}: Medthod: [{methodResults.methodName}], Test Data Name: **{DuplicateStringTestData.name}**, Elapsed Time: {methodResults.elapsed_time}")
     return
 
+#==================================================================================================
+#==================================================================================================
+
 async def main():
     print("Main start")
 
@@ -163,7 +194,7 @@ async def main():
     print()
 
     # Run all the test data thru all the methods.
-    for i in range(2,3):
+    for i in range(3,4):
         for testData in dupStringTestData:
                 FindDupStrings_MethodPassedData(i, testData)
                 print()
