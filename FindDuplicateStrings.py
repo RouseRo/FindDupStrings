@@ -5,7 +5,7 @@
 # Title: The Find Duplicate Strings Project
 # Author: Robert Rouse
 # Created Date: 09-11-2020, 12:15
-# Last Update:  09-15-2020, 16:24
+# Last Update:  09-18-2020, 18:21
 #
 # History:
 #   Added the DuplicateStringsResults class
@@ -13,6 +13,7 @@
 #   Added Calling FDS_Methods by function number
 #   Adding the Hash method
 #   Added GetFirstOccuranceOfStr()
+#   The solution is now a list of lists.
 #
 #==================================================================================================
 #==================================================================================================
@@ -55,6 +56,16 @@ def GetFirstOccuranceOfStr(currentPos, testDataList):
             return i
     return -1
 
+def IsListOfLists(list):
+    if len(list) == 0:
+        return False
+    else:
+        if len(list[0]) >= 2:
+            return True
+        else:
+            return False
+
+
 def FindDupStrings_Random_Method():
     dtStart = datetime.datetime.now()
 
@@ -91,8 +102,7 @@ def FindDupStrings_Hash_Method(DuplicateStringTestData):
             print(f" {str2hash} {hashTable[hashIndex]} is a duplicate")
             # Find the first occurance of the dup string
             firstPos = GetFirstOccuranceOfStr(pos,DuplicateStringTestData.testDataList)
-            solutionLists.append(firstPos)
-            solutionLists.append(pos)
+            solutionLists.append([firstPos, pos])
 
         if hashTable[hashIndex] > 2:
             print(f" {str2hash} {hashTable[hashIndex]} is another duplicate")
@@ -139,12 +149,18 @@ async def main():
 
     # Build test data
     dupStringTestData.append(DuplicateStringTestData("No Dups", ["abcd1", "abcd2", "ABCD3"],[]))
-    dupStringTestData.append(DuplicateStringTestData("One Dup Str 1", ["abcd1", "abcd2", "ABCD3", "DUP01", "DUP01","ABCD5"],[3,4]))
-    dupStringTestData.append(DuplicateStringTestData("One Dup Str 2", ["abcd1", "DUP01", "abcd2", "ABCD3", "DUP01","ABCD5"],[1,4]))
-    dupStringTestData.append(DuplicateStringTestData("One Dup Str 3", ["DUP01", "abcd2", "abcd3", "ABCD4", "ABCD5","DUP01"],[0,5]))
-    dupStringTestData.append(DuplicateStringTestData("Multiple Dup Strs", ["abcd1", "abcd2", "ABCD3", "DUP01", "DUP01","ABCD5", "DUP02", "ABCD7","DUP02"],
+    dupStringTestData.append(DuplicateStringTestData("One Dup Str 1", ["abcd1", "abcd2", "ABCD3", "DUP01", "DUP01","ABCD5"],[[3,4]]))
+    dupStringTestData.append(DuplicateStringTestData("One Dup Str 2", ["abcd1", "DUP01", "abcd2", "ABCD3", "DUP01","ABCD5"],[[1,4]]))
+    dupStringTestData.append(DuplicateStringTestData("One Dup Str 3", ["DUP01", "abcd2", "abcd3", "ABCD4", "ABCD5","DUP01"],[[0,5]]))
+    dupStringTestData.append(DuplicateStringTestData("Multiple Dup Strs 1", ["abcd1", "abcd2", "ABCD3", "DUP01", "DUP01","ABCD5", "DUP02", "ABCD7","DUP02"],
                                                      [[3, 4], [6,8]]))
 
+    dupStringTestData.append(DuplicateStringTestData("Multiple Dup Strs 2", ["abcd1", "abcd2", "ABCD3", "DUP01", "DUP02","ABCD5", "DUP01", "ABCD7","DUP02"],
+                                                     [[3, 6], [4,8]]))
+
+    dupStringTestData.append(DuplicateStringTestData("Multiple Dup Strs 3", 
+        ["abcd1", "abcd2", "ABCD3", "DUP01", "DUP02","ABCD5", "DUP01", "ABCD7","DUP02","DUP01"],
+                                                     [[3, 6, 9], [4,8]]))
     print()
 
     # Run all the test data thru all the methods.
