@@ -5,7 +5,7 @@
 # Title: The Find Duplicate Strings Project
 # Author: Robert Rouse
 # Created Date: 09-11-2020, 12:15
-# Last Updated: 09-19-2020, 17:56
+# last Updated: 09-26-2020, 14:14
 #
 # History:
 #   Added the DuplicateStringsResults class
@@ -16,6 +16,7 @@
 #   The solution is now a list of lists.
 #   Added GetIndexOfSolutionListWithDupStr()
 #   Got the FindDupStrings_Set_Method() working
+#   Remove Dictionary method and added Brute Force method
 #
 #==================================================================================================
 #==================================================================================================
@@ -65,6 +66,19 @@ def GetIndexOfSolutionListWithDupStr(pos, solList, strList):
             return i
     return -1
 
+
+def GetIndexOfSolutionListWithPos(pos, solList):
+    solListsCount = len(solList)
+    for i in range(solListsCount):
+        if pos in solList[i]:
+            return i
+
+    return -1
+
+
+#==================================================================================================
+#==================================================================================================
+
 def FindDupStrings_Random_Method():
     dtStart = datetime.datetime.now()
 
@@ -77,7 +91,6 @@ def FindDupStrings_Random_Method():
     method_elapsed_time = dtEnd - dtStart 
     return DuplicateStringsResults("Random", method_elapsed_time,solutionData)
 
-#==================================================================================================
 #==================================================================================================
 
 def FindDupStrings_Hash_Method(DuplicateStringTestData):
@@ -134,7 +147,7 @@ def FindDupStrings_Set_Method(DuplicateStringTestData):
             if( slIndex >= 0):
                 solutionLists[slIndex].append(pos)
             else:
-            # Find the first occurance of the dup string
+                # Find the first occurance of the dup string
                 firstPos = GetFirstOccuranceOfStr(pos,DuplicateStringTestData.testDataList)
                 solutionLists.append([firstPos, pos])
 
@@ -142,25 +155,62 @@ def FindDupStrings_Set_Method(DuplicateStringTestData):
     method_elapsed_time = dtEnd - dtStart 
     return DuplicateStringsResults("Set", method_elapsed_time,solutionLists)
 
-def FindDupStrings_Dict_Method(DuplicateStringTestData):
-    method_elapsed_time = 3
-    return DuplicateStringsResults("Dict", method_elapsed_time,solutionData)
+#==================================================================================================
 
+def FindRemainingDuplicateStrings(pos, dupStr, testDataList, slnSset):
+    finds = [];
+    for i in range(pos + 1, len(testDataList)):
+        if (dupStr == testDataList[i]):
+            if (i not in slnSset):
+                finds.append(i)
+    return finds
+
+
+def FindDupStrings_Brute_Force_Method(DuplicateStringTestData):
+    solutionLists = []
+    slnList = []
+    solutionSet = {""}
+    dtStart = datetime.datetime.now()
+    solutionLists.clear()
+    solutionSet.clear()
+
+    slnListCount = 0
+
+    for posA in range(len(DuplicateStringTestData.testDataList)):
+        if (posA not in solutionSet):
+            for posB in range(posA + 1, len(DuplicateStringTestData.testDataList)):
+                if (posB not in solutionSet):
+                    if DuplicateStringTestData.testDataList[posA] ==  DuplicateStringTestData.testDataList[posB]:
+                        # print(f"posA [{posA}] and posB [{posB}] are duplicates")
+                        # Find all the dups till the end of the string
+                        solutionLists.append([posA, posB])
+                        solutionSet.add(posA)
+                        solutionSet.add(posB)
+                        dupStr = DuplicateStringTestData.testDataList[posB]
+                        slnList = FindRemainingDuplicateStrings(posB, dupStr, DuplicateStringTestData.testDataList, solutionSet)
+                        if (len(slnList) > 0):
+                            for posC in slnList:
+                                solutionLists[slnListCount].append(posC)
+                                for slnPos in slnList:
+                                    solutionSet.add(slnPos)
+                        # print(f"solutionSet {solutionSet}")
+
+    dtEnd = datetime.datetime.now()
+    method_elapsed_time = dtEnd - dtStart 
+    # print(f"solutionLists = {solutionLists}")
+    return DuplicateStringsResults("Brute Force", method_elapsed_time,solutionLists)
 
 #==================================================================================================
 
 def FindDupStrings_MethodPassedData(funcNum, DuplicateStringTestData):
     if funcNum == 1:
-        methodResults = FindDupStrings_Random_Method()
-
-    if funcNum == 2:
         methodResults = FindDupStrings_Hash_Method(DuplicateStringTestData)
 
-    if funcNum == 3:
+    if funcNum == 2:
         methodResults = FindDupStrings_Set_Method(DuplicateStringTestData)
 
-    if funcNum == 4:
-        methodResults = FindDupStrings_Dict_Method(DuplicateStringTestData)
+    if funcNum == 3:
+        methodResults = FindDupStrings_Brute_Force_Method(DuplicateStringTestData)
 
 
     # print(f"Solution Lists: {DuplicateStringTestData.solutionLists} Method Lists: {methodResults.indexList}")
@@ -179,10 +229,11 @@ async def main():
 
     # Build test data
     dupStringTestData.append(DuplicateStringTestData("No Dups", ["abcd1", "abcd2", "ABCD3"],[]))
-    dupStringTestData.append(DuplicateStringTestData("One Dup Str 1", ["abcd1", "abcd2", "ABCD3", "DUP01", "DUP01","ABCD5"],[[3,4]]))
-    dupStringTestData.append(DuplicateStringTestData("One Dup Str 2", ["abcd1", "DUP01", "abcd2", "ABCD3", "DUP01","ABCD5"],[[1,4]]))
-    dupStringTestData.append(DuplicateStringTestData("One Dup Str 3", ["DUP01", "abcd2", "abcd3", "ABCD4", "ABCD5","DUP01"],[[0,5]]))
-    dupStringTestData.append(DuplicateStringTestData("Multiple Dup Strs 1", ["abcd1", "abcd2", "ABCD3", "DUP01", "DUP01","ABCD5", "DUP02", "ABCD7","DUP02"],
+    dupStringTestData.append(DuplicateStringTestData("One Dup Str 1", ["abcd1", "abcd2", "ABCD3", "DUP01", "DUP01","ABCD5"],[[3, 4]]))
+    dupStringTestData.append(DuplicateStringTestData("One Dup Str 2", ["abcd1", "DUP01", "abcd2", "ABCD3", "DUP01","ABCD5"],[[1, 4]]))
+    dupStringTestData.append(DuplicateStringTestData("One Dup Str 3", ["DUP01", "abcd2", "abcd3", "ABCD4", "ABCD5","DUP01"],[[0, 5]]))
+    dupStringTestData.append(DuplicateStringTestData("One Dup Str 4", ["DUP01", "abcd2", "DUP01", "ABCD4", "ABCD5","DUP01"],[[0, 2, 5]]))
+    dupStringTestData.append(DuplicateStringTestData("Multiple Dup Str 1", ["abcd1", "abcd2", "ABCD3", "DUP01", "DUP01","ABCD5", "DUP02", "ABCD7","DUP02"],
                                                      [[3, 4], [6,8]]))
 
     dupStringTestData.append(DuplicateStringTestData("Multiple Dup Strs 2", ["abcd1", "abcd2", "ABCD3", "DUP01", "DUP02","ABCD5", "DUP01", "ABCD7","DUP02"],
@@ -194,7 +245,7 @@ async def main():
     print()
 
     # Run all the test data thru all the methods.
-    for i in range(3,4):
+    for i in range(1,4):
         for testData in dupStringTestData:
                 FindDupStrings_MethodPassedData(i, testData)
                 print()
