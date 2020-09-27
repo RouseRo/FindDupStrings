@@ -5,7 +5,7 @@
 # Title: The Find Duplicate Strings Project
 # Author: Robert Rouse
 # Created Date: 09-11-2020, 12:15
-# Last Update:  09-18-2020, 18:21
+# Last Updated: 09-18-2020, 19:45
 #
 # History:
 #   Added the DuplicateStringsResults class
@@ -14,6 +14,7 @@
 #   Adding the Hash method
 #   Added GetFirstOccuranceOfStr()
 #   The solution is now a list of lists.
+#   Added GetIndexOfSolutionListWithDupStr()
 #
 #==================================================================================================
 #==================================================================================================
@@ -56,15 +57,12 @@ def GetFirstOccuranceOfStr(currentPos, testDataList):
             return i
     return -1
 
-def IsListOfLists(list):
-    if len(list) == 0:
-        return False
-    else:
-        if len(list[0]) >= 2:
-            return True
-        else:
-            return False
-
+def GetIndexOfSolutionListWithDupStr(pos, solList, strList):
+    solListsCount = len(solList)
+    for i in range(solListsCount):
+        if strList[solList[i][0]] == strList[pos]:
+            return i
+    return -1
 
 def FindDupStrings_Random_Method():
     dtStart = datetime.datetime.now()
@@ -90,23 +88,24 @@ def FindDupStrings_Hash_Method(DuplicateStringTestData):
     for i in range(hashTableSize):
         hashTable.append(0)
 
-    print(f"len of hashTable {len(hashTable)}")
+    # print(f"len of hashTable {len(hashTable)}")
 
     pos = -1
     for str2hash in DuplicateStringTestData.testDataList:
         pos = pos + 1
         hashIndex = abs(hash(str2hash)) % hashTableSize
-        print(f"str[{str2hash}] hash index:[{hashIndex}]")
+        # print(f"str[{str2hash}] hash index:[{hashIndex}]")
         hashTable[hashIndex] = hashTable[hashIndex] + 1
         if hashTable[hashIndex] == 2:
-            print(f" {str2hash} {hashTable[hashIndex]} is a duplicate")
+            # print(f" {str2hash} {hashTable[hashIndex]} is a duplicate")
             # Find the first occurance of the dup string
             firstPos = GetFirstOccuranceOfStr(pos,DuplicateStringTestData.testDataList)
             solutionLists.append([firstPos, pos])
 
         if hashTable[hashIndex] > 2:
-            print(f" {str2hash} {hashTable[hashIndex]} is another duplicate")
-            solutionLists.append(pos)
+            # print(f" {str2hash} {hashTable[hashIndex]} is another duplicate")
+            slIndex = GetIndexOfSolutionListWithDupStr(pos,solutionLists, DuplicateStringTestData.testDataList)
+            solutionLists[slIndex].append(pos)
 
     dtEnd = datetime.datetime.now()
     method_elapsed_time = dtEnd - dtStart 
@@ -136,7 +135,7 @@ def FindDupStrings_MethodPassedData(funcNum, DuplicateStringTestData):
         methodResults = FindDupStrings_Dict_Method(DuplicateStringTestData)
 
 
-    print(f"Solution Lists: {DuplicateStringTestData.solutionLists} Method Lists: {methodResults.indexList}")
+    # print(f"Solution Lists: {DuplicateStringTestData.solutionLists} Method Lists: {methodResults.indexList}")
     if methodResults.indexList == DuplicateStringTestData.solutionLists:
         resultStr = "PASS"
     else:
