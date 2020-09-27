@@ -5,6 +5,7 @@
 # Title: The Find Duplicate Strings Project
 # Author: Robert Rouse
 # Created Date: 09-11-2020, 12:15
+# Last Update:  09-14-2020, 16:32
 #
 # History:
 #   Added the DuplicateStringsResults class
