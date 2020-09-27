@@ -5,7 +5,7 @@
 # Title: The Find Duplicate Strings Project
 # Author: Robert Rouse
 # Created Date: 09-11-2020, 12:15
-# last Updated: 09-26-2020, 14:14
+# last Updated: 09-27-2020, 12:40
 #
 # History:
 #   Added the DuplicateStringsResults class
@@ -218,7 +218,7 @@ def FindDupStrings_MethodPassedData(funcNum, DuplicateStringTestData):
         resultStr = "PASS"
     else:
         resultStr = "FAIL"
-    print(f" {resultStr}: Medthod: [{methodResults.methodName}], Test Data Name: **{DuplicateStringTestData.name}**, Elapsed Time: {methodResults.elapsed_time}")
+    print(f" {resultStr}: Medthod: [{methodResults.methodName}], Test Data Name: **{DuplicateStringTestData.name}**, Elapsed Time: {methodResults.elapsed_time.total_seconds()}")
     return
 
 #==================================================================================================
