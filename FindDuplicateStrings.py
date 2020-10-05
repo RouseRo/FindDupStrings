@@ -5,7 +5,21 @@
 # Title: The Find Duplicate Strings Project
 # Author: Robert Rouse
 # Created Date: 09-11-2020, 12:15
-# last Updated: 09-27-2020, 12:40
+# last Updated: 10-04-2020, 20:40
+#
+# Purpose:
+#   This program is the result of a discuss with some friends about the interview question, 
+#   "What is the best way to find duplicate string?".  I decided to write this program that
+#   compares different methods and it kind of development a life of it's own because
+#   programming in Python is fun and I thought I could use it was a way of teaching 
+#   how to program in Python by the method of Incremental Improvement. 
+#
+# Features:
+#   There is a framework for verifying that the Find Duplicate String methods work.  
+#   This framework has three parts.  
+#       1) Data with known duplicate strings
+#       2) Methods that locates duplicate strings in the above data.
+#       3) A way to verify that the methods correctly located all the duplicate strings.  
 #
 # History:
 #   Added the DuplicateStringsResults class
@@ -17,15 +31,20 @@
 #   Added GetIndexOfSolutionListWithDupStr()
 #   Got the FindDupStrings_Set_Method() working
 #   Remove Dictionary method and added Brute Force method
+#   Wrote MethodTResults to a JSON file and converted elapsed time to total seconds.
 #
 #==================================================================================================
 #==================================================================================================
 
 import asyncio
-import time, datetime
+import time
+import datetime
+from datetime import timedelta
 import random
 import collections
 import hashlib
+import json
+from json import JSONEncoder
 
 solutionData  = [[3, 4], [6,8]]
 
@@ -75,7 +94,6 @@ def GetIndexOfSolutionListWithPos(pos, solList):
 
     return -1
 
-
 #==================================================================================================
 #==================================================================================================
 
@@ -123,7 +141,7 @@ def FindDupStrings_Hash_Method(DuplicateStringTestData):
             solutionLists[slIndex].append(pos)
 
     dtEnd = datetime.datetime.now()
-    method_elapsed_time = dtEnd - dtStart 
+    method_elapsed_time = (dtEnd - dtStart).total_seconds() 
     return DuplicateStringsResults("Hash", method_elapsed_time,solutionLists)
 
 #==================================================================================================
@@ -152,7 +170,7 @@ def FindDupStrings_Set_Method(DuplicateStringTestData):
                 solutionLists.append([firstPos, pos])
 
     dtEnd = datetime.datetime.now()
-    method_elapsed_time = dtEnd - dtStart 
+    method_elapsed_time = (dtEnd - dtStart).total_seconds() 
     return DuplicateStringsResults("Set", method_elapsed_time,solutionLists)
 
 #==================================================================================================
@@ -196,13 +214,23 @@ def FindDupStrings_Brute_Force_Method(DuplicateStringTestData):
                         # print(f"solutionSet {solutionSet}")
 
     dtEnd = datetime.datetime.now()
-    method_elapsed_time = dtEnd - dtStart 
+    method_elapsed_time = (dtEnd - dtStart).total_seconds()
     # print(f"solutionLists = {solutionLists}")
     return DuplicateStringsResults("Brute Force", method_elapsed_time,solutionLists)
 
 #==================================================================================================
 
-def FindDupStrings_MethodPassedData(funcNum, DuplicateStringTestData):
+def FindDupStrings_MethodPassedData(funcNum, DuplicateStringTestData, json_file):
+
+
+    # subclass JSONEncoder
+    class DateTimeEncoder(JSONEncoder):
+            #Override the default method
+            def default(self, obj):
+                if isinstance(obj, (datetime.date, datetime.datetime)):
+                    return obj.isoformat()
+
+
     if funcNum == 1:
         methodResults = FindDupStrings_Hash_Method(DuplicateStringTestData)
 
@@ -216,9 +244,11 @@ def FindDupStrings_MethodPassedData(funcNum, DuplicateStringTestData):
     # print(f"Solution Lists: {DuplicateStringTestData.solutionLists} Method Lists: {methodResults.indexList}")
     if methodResults.indexList == DuplicateStringTestData.solutionLists:
         resultStr = "PASS"
+        jsonStr = json.dumps(methodResults.__dict__, indent=4, cls=DateTimeEncoder,)
+        json_file.write(jsonStr)
     else:
         resultStr = "FAIL"
-    print(f" {resultStr}: Medthod: [{methodResults.methodName}], Test Data Name: **{DuplicateStringTestData.name}**, Elapsed Time: {methodResults.elapsed_time.total_seconds()}")
+    print(f" {resultStr}: Medthod: [{methodResults.methodName}], Test Data Name: **{DuplicateStringTestData.name}**, Elapsed Time: {methodResults.elapsed_time}")
     return
 
 #==================================================================================================
@@ -244,13 +274,15 @@ async def main():
                                                      [[3, 6, 9], [4,8]]))
     print()
 
-    # Run all the test data thru all the methods.
-    for i in range(1,4):
-        for testData in dupStringTestData:
-                FindDupStrings_MethodPassedData(i, testData)
-                print()
+    with open("methodResults.json", 'w') as json_file:
+        # Run all the test data thru all the methods.
+        for i in range(1,4):
+            for testData in dupStringTestData:
+                    FindDupStrings_MethodPassedData(i, testData, json_file)
+                    print()
 
     print()
+    json_file.close()
 
 asyncio.run(main())
 
