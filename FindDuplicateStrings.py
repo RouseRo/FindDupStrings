@@ -5,7 +5,7 @@
 # Title: The Find Duplicate Strings Project
 # Author: Robert Rouse
 # Created Date: 09-11-2020, 12:15
-# last Updated: 10-04-2020, 20:40
+# last Updated: 10-05-2020, 19:06
 #
 # Purpose:
 #   This program is the result of a discuss with some friends about the interview question, 
@@ -32,6 +32,7 @@
 #   Got the FindDupStrings_Set_Method() working
 #   Remove Dictionary method and added Brute Force method
 #   Wrote MethodTResults to a JSON file and converted elapsed time to total seconds.
+#   Writing result data to a CVS file.
 #
 #==================================================================================================
 #==================================================================================================
@@ -220,7 +221,7 @@ def FindDupStrings_Brute_Force_Method(DuplicateStringTestData):
 
 #==================================================================================================
 
-def FindDupStrings_MethodPassedData(funcNum, DuplicateStringTestData, json_file):
+def FindDupStrings_MethodPassedData(funcNum, DuplicateStringTestData, results_file):
 
 
     # subclass JSONEncoder
@@ -244,11 +245,12 @@ def FindDupStrings_MethodPassedData(funcNum, DuplicateStringTestData, json_file)
     # print(f"Solution Lists: {DuplicateStringTestData.solutionLists} Method Lists: {methodResults.indexList}")
     if methodResults.indexList == DuplicateStringTestData.solutionLists:
         resultStr = "PASS"
-        jsonStr = json.dumps(methodResults.__dict__, indent=4, cls=DateTimeEncoder,)
-        json_file.write(jsonStr)
+        # jsonStr = json.dumps(methodResults.__dict__, indent=4, cls=DateTimeEncoder,)
+        results_file.write(f"{methodResults.methodName},{DuplicateStringTestData.name},{methodResults.elapsed_time}\n")
     else:
         resultStr = "FAIL"
     print(f" {resultStr}: Medthod: [{methodResults.methodName}], Test Data Name: **{DuplicateStringTestData.name}**, Elapsed Time: {methodResults.elapsed_time}")
+    
     return
 
 #==================================================================================================
@@ -274,15 +276,15 @@ async def main():
                                                      [[3, 6, 9], [4,8]]))
     print()
 
-    with open("methodResults.json", 'w') as json_file:
+    with open("methodResults.txt", 'w') as results_file:
         # Run all the test data thru all the methods.
         for i in range(1,4):
             for testData in dupStringTestData:
-                    FindDupStrings_MethodPassedData(i, testData, json_file)
+                    FindDupStrings_MethodPassedData(i, testData, results_file)
                     print()
 
     print()
-    json_file.close()
+    results_file.close()
 
 asyncio.run(main())
 

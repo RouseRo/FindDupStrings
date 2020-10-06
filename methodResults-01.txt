@@ -1,0 +1,24 @@
+Hash	No Dups	0.001014
+Hash	One Dup Str 1	0.000986
+Hash	One Dup Str 2	0.000999
+Hash	One Dup Str 3	0.001
+Hash	One Dup Str 4	0.002
+Hash	Multiple Dup Str 1	0.000999
+Hash	Multiple Dup Strs 2	0.001998
+Hash	Multiple Dup Strs 3	0.001999
+Set	No Dups	0.001
+Set	One Dup Str 1	0
+Set	One Dup Str 2	0.001
+Set	One Dup Str 3	0
+Set	One Dup Str 4	0.000999
+Set	Multiple Dup Str 1	0
+Set	Multiple Dup Strs 2	0.001
+Set	Multiple Dup Strs 3	0.000998
+Brute Force	No Dups	0
+Brute Force	One Dup Str 1	0.001
+Brute Force	One Dup Str 2	0
+Brute Force	One Dup Str 3	0
+Brute Force	One Dup Str 4	0
+Brute Force	Multiple Dup Str 1	0
+Brute Force	Multiple Dup Strs 2	0.001
+Brute Force	Multiple Dup Strs 3	0.002001
